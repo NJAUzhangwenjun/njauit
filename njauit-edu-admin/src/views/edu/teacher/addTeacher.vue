@@ -24,7 +24,31 @@
         <el-input v-model="teacher.intro" :rows="10" type="textarea" />
       </el-form-item>
 
+      <!-- 讲师头像：TODO -->
+      <!-- 讲师头像 -->
+      <el-form-item label="讲师头像">
+        <!-- 头衔缩略图 -->
+        <pan-thumb :image="teacher.avatar" />
+        <!-- 文件上传按钮 -->
+        <el-button type="primary" icon="el-icon-upload" @click="imagecropperShow=true">更换头像</el-button>
 
+        <!--
+          v-show：是否显示上传组件
+          :key：类似于id，如果一个页面多个图片上传控件，可以做区分
+          :url：后台上传的url地址
+          @close：关闭上传组件
+        @crop-upload-success：上传成功后的回调-->
+        <image-cropper
+          v-show="imagecropperShow"
+          :width="300"
+          :height="300"
+          :key="imagecropperKey"
+          :url="BASE_API+'/edu/oss/upload'"
+          field="file"
+          @close="close"
+          @crop-upload-success="cropSuccess"
+        />
+      </el-form-item>
       <!-- 讲师头像：TODO -->
 
       <el-form-item>
@@ -36,26 +60,35 @@
 
 <script>
 import teacher from "@/api/teacher.js";
+import ImageCropper from "@/components/ImageCropper";
+import PanThumb from "@/components/PanThumb";
+
+const teacherDefault = {
+  name: "",
+  sort: 0,
+  level: 1,
+  career: "",
+  intro: "",
+  avatar: "https://edu-njau.oss-cn-beijing.aliyuncs.com/2019/11/09/8d46e484file.png"
+};
 
 export default {
   data() {
     return {
-      teacher: {
-        name: "",
-        sort: 0,
-        level: 1,
-        career: "",
-        intro: "",
-        avatar: ""
-      },
-      saveBtnDisabled: false // 保存按钮是否禁用,
+      teacher: teacherDefault,
+      saveBtnDisabled: false, // 保存按钮是否禁用,
+      BASE_API: process.env.BASE_API, // 接口API地址
+      imagecropperShow: false, // 是否显示上传组件
+      imagecropperKey: 0 // 上传组件id
     };
   },
+  components: { ImageCropper, PanThumb },
   created() {
     if (this.$route.params && this.$route.params.id) {
       const id = this.$route.params.id;
       this.getTeacherById(id);
-      console.log(id);
+    } else {
+      this.teacher = { ...teacherDefault };
     }
   },
   methods: {
@@ -69,7 +102,6 @@ export default {
         this.saveData();
       }
     },
-
     // 保存
     saveData() {
       teacher
@@ -111,6 +143,25 @@ export default {
           this.$message.error("修改失败！");
           this.saveBtnDisabled = false;
         });
+    },
+    // 上传成功后的回调函数
+    cropSuccess(data) {
+      // console.log(data.imgUrl)
+      this.imagecropperShow = false;
+      this.teacher.avatar = data.imgUrl;
+      this.imagecropperKey = this.imagecropperKey + 1;
+    },
+
+    // 关闭上传组件
+    close() {
+      // 关闭弹窗
+      this.imagecropperShow = false;
+      this.imagecropperKey = this.imagecropperKey + 1;
+    }
+  },
+  watch: {
+    $route(to, from) {
+      this.teacher = { ...teacherDefault };
     }
   }
 };
