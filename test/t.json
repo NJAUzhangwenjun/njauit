@@ -1,0 +1,21 @@
+{
+  "config": {
+    "transformRequest": {},
+    "transformResponse": {},
+    "timeout": 5000,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "X-Token": "admin",
+      "Content-Type": "application/json;charset=utf-8"
+    },
+    "method": "get",
+    "baseURL": "http://localhost:8081",
+    "url": "http://localhost:8081/edu/course/save-course-info",
+    "type": "post",
+    "data": "{\"title\":\"心中的会计是国行\",\"subjectId\":\"\",\"subjectParentId\":\"\",\"teacherId\":\"\",\"lessonNum\":0,\"description\":\"\",\"cover\":\"\",\"price\":0}"
+  },
+  "request": {}
+}

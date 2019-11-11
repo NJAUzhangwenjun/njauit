@@ -62,6 +62,16 @@ export default {
       method: 'put',
       data: teacher
     })
+  },
+
+  /**
+   * 获取老师列表
+   */
+  teacherList() {
+    return request({
+      url: '/edu/teacher',
+      method: 'get'
+    })
   }
 
 }
