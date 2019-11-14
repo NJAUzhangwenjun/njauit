@@ -42,7 +42,7 @@ export default {
     },
     next() {
       this.saveBtnDisabled = true;
-      this.$router.push({ path: "/course/publish/1" });
+      this.$router.push({ path: "/course/publish/" + this.$route.params.id });
     },
     /** 返回上一步 */
     previous() {

@@ -41,4 +41,17 @@ export default {
       params: searchObj
     })
   },
+  getCoursePublishInfoById(id) {
+    return request({
+      url: `/edu/course/course-publish-info/${id}`,
+      method: 'get'
+    })
+  },
+
+  publishCourse(id) {
+    return request({
+      url: `/edu/course/publish-course/${id}`,
+      method: 'put'
+    })
+  }
 }

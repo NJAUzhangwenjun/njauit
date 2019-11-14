@@ -80,6 +80,7 @@
           </div>
         </template>
       </el-table-column>
+     
 
       <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">{{ scope.row.gmtCreate.substr(0, 10) }}</template>
