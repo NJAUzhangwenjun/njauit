@@ -15,11 +15,13 @@
   },
   "dependencies": {
     "axios": "0.18.0",
+    "echarts": "^4.1.0",
     "element-ui": "2.4.6",
     "js-cookie": "2.2.0",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "vue": "2.5.17",
+    "vue-aliplayer": "^0.0.8",
     "vue-router": "3.0.1",
     "vuex": "3.0.1"
   },

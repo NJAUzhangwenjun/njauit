@@ -113,7 +113,10 @@
           <router-link :to="'/course/chapter/'+scope.row.id">
             <el-button type="text" size="mini" icon="el-icon-edit">编辑课程大纲</el-button>
           </router-link>
-          <el-button type="text" size="mini" icon="el-icon-delete">删除</el-button>
+          <router-link :to="'/course/chapterList/'+scope.row.id">
+            <el-button type="text" size="mini" icon="el-icon-edit">章节列表详情</el-button>
+          </router-link>
+          <el-button type="text" sisze="mini" icon="el-icon-delete">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

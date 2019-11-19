@@ -85,6 +85,29 @@ export const constantRouterMap = [{
   },
 
   {
+    path: '/statistics/daily',
+    component: Layout,
+    redirect: '/statistics/daily/create',
+    name: 'Statistics',
+    meta: { title: '统计分析', icon: 'tree' }, 
+    children: [
+      {
+        path: 'create',
+        name: 'StatisticsDailyCreate',
+        component: () => import('@/views/statistics/daily/create'),
+        meta: { title: '生成统计' }
+      },
+      {
+        path: 'chart',
+        name: 'StatisticsDayChart',
+        component: () => import('@/views/statistics/daily/chart'),
+        meta: { title: '统计图表' }
+    }  
+    ]
+  },
+
+
+  {
     path: '/subject',
     component: Layout,
     redirect: '/subject/list',
@@ -139,6 +162,26 @@ export const constantRouterMap = [{
           title: '发布课程',
           icon: 'tree'
         }
+      },
+      {
+        path: 'chapterList/:id',
+        name: '课程章节详情',
+        component: () => import('@/views/edu/course/list'),
+        meta: {
+          title: '课程章节详情',
+          icon: 'tree'
+        },
+        hidden: true
+      },
+      {
+        path: 'videovisual/:videoSourceId',
+        name: '观看视频',
+        component: () => import('@/views/edu/course/videovisual'),
+        meta: {
+          title: '观看视频',
+          icon: 'tree'
+        },
+        hidden: true
       },
       {
         path: 'info/:id',

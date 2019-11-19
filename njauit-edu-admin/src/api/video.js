@@ -24,6 +24,18 @@ export default {
       method: 'get',
     })
   },
+  /**
+   * 删除视频记录
+   * @param {*} videoId 
+   * @param {*} videoSourceId 
+   */
+  rmVideoSource(videoId,videoSourceId) {
+    return request({
+      // Controller中的路径
+      url: '/edu/video/' + videoId/+videoSourceId,
+      method: 'get',
+    })
+  },
 
 
   /**
@@ -37,4 +49,18 @@ export default {
       method: 'delete',
     })
   },
+  // 删除视频
+  removeById(id) {
+    return request({
+        url: `/vidservice/vid/${id}`,
+        method: 'delete'
+    })
+    
+  },
+  getPlayAuth(vid) {
+    return request({
+      url: `/vidservice/vid/get-play-auth/${vid}`,
+      method: 'get'
+    })
+  }
 }

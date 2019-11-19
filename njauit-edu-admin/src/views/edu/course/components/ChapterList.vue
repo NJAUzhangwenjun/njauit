@@ -38,6 +38,32 @@
         <el-form-item label="小节名称">
           <el-input v-model="video.title"></el-input>
         </el-form-item>
+
+        <el-form-item label="上传视频">
+          <el-upload
+            ref="upload"
+            :on-success="handleVodUploadSuccess"
+            :on-remove="handleVodRemove"
+            :before-remove="beforeVodRemove"
+            :on-exceed="handleUploadExceed"
+            :file-list="fileList"
+            :action="BASE_API+'/vidservice/vid/upload'"
+            :limit="1"
+            class="upload-demo"
+          >
+            <el-button size="small" type="primary">上传视频</el-button>
+            <el-tooltip placement="right-end">
+              <div slot="content">
+                最大支持1G，
+                <br />支持3GP、ASF、AVI、DAT、DV、FLV、F4V、
+                <br />GIF、M2T、M4V、MJ2、MJPEG、MKV、MOV、MP4、
+                <br />MPE、MPG、MPEG、MTS、OGG、QT、RM、RMVB、
+                <br />SWF、TS、VOB、WMV、WEBM 等视频格式上传
+              </div>
+              <i class="el-icon-question" />
+            </el-tooltip>
+          </el-upload>
+        </el-form-item>
         <el-form-item>
           <el-select v-model="video.sort" placeholder="排序">
             <el-option
@@ -97,11 +123,13 @@ let chapterDefault = {
 let videoDefault = {
   courseId: "",
   chapterId: "",
+  videoSourceId: "",
   id: "",
   title: "",
-  sort: 0
+  sort: 0,
   // playCount: 0,
   // isFree:false,
+  videoOriginalName: ""
 };
 export default {
   // 父组件向子组件传值
@@ -127,7 +155,9 @@ export default {
           label: "倒序"
         }
       ],
-      video: videoDefault
+      video: videoDefault,
+      fileList: [], //上传文件列表
+      BASE_API: process.env.BASE_API // 接口API地址
     };
   },
 
@@ -136,9 +166,39 @@ export default {
   },
 
   methods: {
+    beforeVodRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`);
+    },
+    handleVodRemove(file, fileList) {
+      console.log(file);
+      video.removeById(this.video.videoSourceId).then(response => {
+        this.$message({
+          type: "success",
+          message: response.message
+        });
+        video
+          .rmVideoSource(this.video.videoId, this.video.videoSourceId)
+          .then(() => {
+            this.fetchChapterNestedListByCourseId();
+          });
+      });
+    },
+
+    //成功回调
+    handleVodUploadSuccess(response, file, fileList) {
+      this.video.videoSourceId = response.data.videoId;
+      this.video.videoOriginalName = file.name;
+    },
+    //上传多于一个视频
+
+    handleUploadExceed(files, fileList) {
+      this.$message.warning("想要重新上传视频，请先删除已上传的视频");
+    },
+
     fetchChapterNestedListByCourseId() {
       this.chapter = { ...chapterDefault };
       this.video = { ...videoDefault };
+      this.video.videoOriginalName = "";
       this.chapter.courseId = this.courseId;
       chapter.getNestedTreeList(this.courseId).then(response => {
         this.chapterNestedList = response.data.item;
@@ -189,6 +249,8 @@ export default {
     /** 添加video */
     insertVideo() {
       this.dialogVideoVisible = false;
+      // this.video.chapterId = chapterId;
+      this.video.courseId = this.courseId;
       video
         .saveOrUpdateVideo(this.video)
         .then(success => {
@@ -198,17 +260,30 @@ export default {
         .then(error => {
           this.$message.error(error.message);
         });
+      this.video.videoOriginalName = "";
     },
     addvideo(chapterId) {
+      // this.video.videoId = "";
+      this.video = { ...videoDefault };
       this.video.chapterId = chapterId;
-      this.video.courseId = this.courseId;
+      this.video.videoOriginalName = "";
       this.dialogVideoVisible = true;
     },
     editVideo(videoId) {
+      // this.video.videoOriginalName = "";
       video
         .getVideoById(videoId)
         .then(success => {
           this.video = success.data.video;
+          if (this.video.videoSourceId && this.video.videoOriginalName) {
+            this.fileList = [{ name: this.video.videoOriginalName }];
+          } else if (
+            this.video.videoSourceId &&
+            this.video.videoOriginalName == ""
+          ) {
+            this.fileList = [{ name: "视频" + this.video.videoSourceId }];
+          }
+
           this.dialogVideoVisible = true;
         })
         .catch(error => {
@@ -222,6 +297,7 @@ export default {
           return video.deleteVideoById(videoId);
         })
         .then(success => {
+          this.video.videoOriginalName = "";
           this.fetchChapterNestedListByCourseId();
           this.$message.success("添加成功");
         })
