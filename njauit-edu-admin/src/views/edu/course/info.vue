@@ -131,10 +131,10 @@ export default {
     };
   },
   created() {
-    this.courseInfo = { ...defaultForm };
     if (this.$route.params && this.$route.params.id) {
       this.getCourseInfoById(this.$route.params.id);
     } else {
+      this.courseInfo = { ...defaultForm };
       this.getSubject();
     }
     this.getTeacherList();
@@ -164,18 +164,10 @@ export default {
         .getCourseInfoById(courseId)
         .then(respont => {
           this.courseInfo = respont.data.courseInfo;
+          this.getSubject();
+          // 填充二级菜单：遍历一级菜单列表，
         })
         .catch(error => {});
-      this.getSubject();
-      // 填充二级菜单：遍历一级菜单列表，
-      // 填充二级菜单：遍历一级菜单列表，
-      for (let i = 0; i < this.subjectNestedList.length; i++) {
-        // 找到和courseInfo.subjectParentId一致的父类别记录
-        if (this.subjectNestedList[i].id === this.courseInfo.subjectParentId) {
-          // 拿到当前类别下的子类别列表，将子类别列表填入二级下拉菜单列表
-          this.subSubjectList = this.subjectNestedList[i].children;
-        }
-      }
     },
 
     // 下一步
@@ -235,6 +227,18 @@ export default {
         .getSubject()
         .then(respont => {
           this.subjectNestedList = respont.data.data;
+          if (this.$route.params && this.$route.params.id) {
+            // 填充二级菜单：遍历一级菜单列表，
+            for (let i = 0; i < this.subjectNestedList.length; i++) {
+              // 找到和courseInfo.subjectParentId一致的父类别记录
+              if (
+                this.subjectNestedList[i].id === this.courseInfo.subjectParentId
+              ) {
+                // 拿到当前类别下的子类别列表，将子类别列表填入二级下拉菜单列表
+                this.subSubjectList = this.subjectNestedList[i].children;
+              }
+            }
+          }
         })
         .catch(error => {});
     },
